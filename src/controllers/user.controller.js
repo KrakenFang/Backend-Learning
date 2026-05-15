@@ -100,7 +100,6 @@ const registerUser = asyncHandler(async (req, res) => {
     .status(201)
     .json(new ApiResponse(200, createdUser, "User Registered Succesfull."));
 });
-
 // ********to revise ***********
 //get user details fron frontend ,        done
 //validation - not empty,           done
@@ -111,7 +110,6 @@ const registerUser = asyncHandler(async (req, res) => {
 //remove pass n refresh token field from response    ,     done
 //check for user creation
 //return response , if not then send error
-
 const loginUser = asyncHandler(async (req, res) => {
   // req body ->  data
   //username or email
