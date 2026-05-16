@@ -18,6 +18,8 @@ const generateAccessAndRefreshTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (error) {
+    console.log(error);
+    
     throw new ApiError(
       500,
       "Something went wrong while generarting refesh and access token."
@@ -172,8 +174,8 @@ const logoutUser = asyncHandler(async (req, res) => {
   await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: {
-        refreshToken: undefined,
+      $unset: {
+        refreshToken: 1,
       },
     },
     {
@@ -401,7 +403,7 @@ const getUserChannelProfile = asyncHandler(async( req,res) =>{
       }
     },
     {
-      $porject:{
+      $project:{
         fullName: 1,
         username: 1, 
         subscribersCount: 1,
