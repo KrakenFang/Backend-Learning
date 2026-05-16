@@ -268,9 +268,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      200,
-      requestAnimationFrame.user,
-      "Current User fetched Successfully."
+      new ApiResponse(200, {}," Password changed successfully.")
     );
 });
 
@@ -281,7 +279,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required.");
   }
 
-  const user = User.findByIdAndUpdate(req.user?._id, {
+  const user = await User.findByIdAndUpdate(req.user?._id, {
     $set: {
       fullName: fullName,
       // you can use just "fullName,"
