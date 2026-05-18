@@ -18,6 +18,10 @@ const playlistSchema = new Schema(
             type: Schema.Types.ObjectId,
             ref:"User"
         },
+        visibility:{
+            type: String,
+            enum: ["public", "private","unlisted"]
+        }
     },{
         timestamps: true
     });

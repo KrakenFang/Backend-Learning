@@ -22,7 +22,7 @@ const generateAccessAndRefreshTokens = async (userId) => {
     
     throw new ApiError(
       500,
-      "Something went wrong while generarting refesh and access token."
+      "Something went wrong while generating refresh and access token."
     );
   }
 };
@@ -223,7 +223,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       secure: true,
     };
 
-    const { accessToken, newRefreshToken } =
+    const { accessToken, refreshToken: newRefreshToken } =
       await generateAccessAndRefreshTokens(user._id);
 
     return res
@@ -293,7 +293,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
 
   return res
   .status(200)
-  .josn(new ApiResponse(200, user, "Account details updated successfully."))
+  .json(new ApiResponse(200, user, "Account details updated successfully."))
 });
 
 const updateUserAvatar = asyncHandler(async(req, res) => {
@@ -340,7 +340,7 @@ const updateUserCoverImage = asyncHandler(async(req, res) => {
   }
 
   const user = await User.findByIdAndUpdate(
-    req,user?._id,
+    req.user?._id,
     {
       $set:{
         coverImage: coverImage.url
@@ -445,7 +445,7 @@ const getWatchHistory  = asyncHandler(async( req, res) => {
           {
             $lookup: {
               from:"users",
-              localField:"owner ",
+              localField:"owner",
               foreignField: "_id",
               as:"owner",
               pipeline:[
@@ -475,7 +475,7 @@ const getWatchHistory  = asyncHandler(async( req, res) => {
   .status(200)
   .json(
      new ApiResponse(200,
-      user[0].getWatchHistory,
+      user[0].WatchHistory,
       "Watch History fetched successfully."
      )
   )
