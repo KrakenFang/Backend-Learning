@@ -25,14 +25,14 @@ const createTweet = asyncHandler(async (req, res) => {
   //return response
 
   return res
-    .status(200)
-    .json(new ApiResponse(200, tweet, "tweet created Successfully."));
+    .status(201)
+    .json(new ApiResponse(201, tweet, "tweet created Successfully."));
 });
 
 // TODO: get user tweets
 const getUserTweets = asyncHandler(async (req, res) => {
   //get tweets
-  const userId = req.user._id;
+  const { userId } = req.user._id;
   const page = parseInt(req.query.page) || 1;
   const limit = parseInt(req.query.limit) || 10;
   const skip = (page - 1) * limit;
@@ -85,7 +85,7 @@ const updateTweet = asyncHandler(async (req, res) => {
   }
 
   if (tweet.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "Not authorized to update this tweet");
+    throw new ApiError(403, "Not authorized to update this tweet");
   }
 
   const { content } = req.body;
@@ -113,15 +113,20 @@ const deleteTweet = asyncHandler(async (req, res) => {
     throw new ApiError(400, "Invalid tweetId");
   }
 
-  if (tweet.owner.toString() !== req.user._id.toString()) {
-    throw new ApiError(401, "Not authorized to delete this tweet");
-  }
+  const tweet = await Tweet.findById(tweetId)
 
-  const tweet = await Tweet.findOneAndDelete({ _id: tweetId, owner:req.user._id });
   if (!tweet) {
     throw new ApiError(404, "Tweet not found.");
   }
 
+
+  if (tweet.owner.toString() !== req.user._id.toString()) {
+    throw new ApiError(403, "Not authorized to delete this tweet");
+  }
+
+await Tweet.findOneAndDelete(
+ tweetId);
+  
   return res
     .status(200)
     .json(new ApiResponse(200, {}, "Tweet deleted Successfully."));

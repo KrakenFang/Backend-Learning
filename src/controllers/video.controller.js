@@ -30,8 +30,8 @@ const getAllVideos = asyncHandler(async (req, res) => {
       },
     ];
   }
-  if (!isValidObjectId(userId)) {
-    match.owner = userId;
+  if (userId && isValidObjectId(userId)) {
+    match.owner = new mongoose.Types.ObjectId(userId);
   }
 
   //sorting
@@ -101,7 +101,7 @@ const getAllVideos = asyncHandler(async (req, res) => {
 // TODO: get video, upload to cloudinary, create video
 
 const publishAVideo = asyncHandler(async (req, res) => {
-  const { title, description } = req.body;
+
 
   // get input from user
   const { title, description, duration } = req.body;
@@ -145,7 +145,7 @@ const publishAVideo = asyncHandler(async (req, res) => {
     description,
     duration : Number(duration),
     videoFile:  videoFile.url,
-    thumbnailFile:  thumbnailFile.url,
+    thumbnail:  thumbnailFile.url,
     owner:  req.user._id
 
   })
@@ -208,9 +208,9 @@ const updateVideo = asyncHandler(async (req, res) => {
     }
 
     // searching the video 
-    const video = await video.findById(videoId);
+    const video = await Video.findById(videoId);
     if(!video){
-        throw new ApiError(400,"Video not found.")
+        throw new ApiError(404,"Video not found.")
     }
 
     // check ownership of video 
@@ -250,7 +250,7 @@ const updateVideo = asyncHandler(async (req, res) => {
 
     return res
     .status(200)
-    .json(200,
+    .json(
         new ApiResponse(200,video,"Video Updated Successfully.")
     )
 })

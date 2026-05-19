@@ -22,7 +22,7 @@ const getVideoComments = asyncHandler(async (req, res) => {
   const skip = (page - 1) * limit;
 
   //convert videoid string into real mongoDb objectId
-  const videoObjectId = mongoose.Types.ObjectId(videoId);
+  const videoObjectId = new mongoose.Types.ObjectId(videoId);
 
   //get comment owner details
   const comments = await Comment.aggregate([
@@ -112,7 +112,7 @@ const addComment = asyncHandler(async (req, res) => {
     video: videoId,
   });
 
-  return res.status(200).json(
+  return res.status(201).json(
     new ApiResponse(
       201,
       {

@@ -48,7 +48,7 @@ const toggleSubscription = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, {}, "Successfully Unsubscribed."));
   } else {
-    await Subscription.create({ _id: userId, channel: channelId });
+    await Subscription.create({ subscriber: userId, channel: channelId });
     return res
       .status(200)
       .json(new ApiResponse(200, {}, "Successfully Subscribed."));
@@ -69,7 +69,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
 
   const subscribers = await Subscription.aggregate([
     {
-      $match: { channel: mongoose.Types.ObjectId(channelId) },
+      $match: { channel: new mongoose.Types.ObjectId(channelId) },
     },
     {
       $lookup: {
@@ -86,7 +86,7 @@ const getUserChannelSubscribers = asyncHandler(async (req, res) => {
       $project: {
         _id: 0,
         subscriberId: "$subscriberDetails._id",
-        fullName: "subscriberDetails.fullName",
+        fullName: "$subscriberDetails.fullName",
         email: "$subscriberDetails.email",
       },
     },
@@ -119,7 +119,7 @@ const getSubscribedChannels = asyncHandler(async (req, res) => {
 
   const subscribedChannel = await Subscription.aggregate([
     {
-        $match: {subscriber: mongoose.Types.ObjectId(subscriberId)}
+        $match: {subscriber: new mongoose.Types.ObjectId(subscriberId)}
     },{
         $lookup:{
             from:'users',

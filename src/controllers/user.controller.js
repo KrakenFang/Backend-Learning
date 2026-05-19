@@ -5,7 +5,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
-import { application } from "express";
+
 
 const generateAccessAndRefreshTokens = async (userId) => {
   try {
@@ -102,7 +102,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
   return res
     .status(201)
-    .json(new ApiResponse(200, createdUser, "User Registered Succesfull."));
+    .json(new ApiResponse(201, createdUser, "User Registered Succesfull."));
 });
 // ********to revise ***********
 //get user details fron frontend ,        done
@@ -139,7 +139,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const isPasswordValid = await user.isPasswordCorrect(password);
 
   if (!isPasswordValid) {
-    throw new ApiError(404, "Password is incorrect.");
+    throw new ApiError(401, "Password is incorrect.");
   }
   const { accessToken, refreshToken } = await generateAccessAndRefreshTokens(
     user._id
@@ -190,7 +190,7 @@ const logoutUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .clearCookie("accessToken", options)
-    .cookie("refreshToken", options)
+    .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User logged out."));
 });
 
@@ -272,7 +272,7 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, {},"Current User fetched Successfully.")
+      new ApiResponse(200, req.user,"Current User fetched Successfully.")
     );
 });
 
@@ -309,7 +309,7 @@ const updateUserAvatar = asyncHandler(async(req, res) => {
   }
 
   const user = await User.findByIdAndUpdate(
-    req,user?._id,
+    req.user?._id,
     {
       $set:{
         avatar: avatar.url
@@ -475,7 +475,7 @@ const getWatchHistory  = asyncHandler(async( req, res) => {
   .status(200)
   .json(
      new ApiResponse(200,
-      user[0].WatchHistory,
+      user[0].watchHistory,
       "Watch History fetched successfully."
      )
   )

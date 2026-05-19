@@ -5,29 +5,29 @@ const videoSchema = new Schema(
     {
         videoFile: {
             type :String , //cloudinary url 
-            reuqired:  true 
+            required:  true 
         },
         thumbnail: {
             type :String , //cloudinary url 
-            reuqired:  true 
+            required:  true 
         },
         title: {
             type :String , //cloudinary url 
-            reuqired:  true 
+            required:  true 
         },
         description: {
             type :String , //cloudinary url 
-            reuqired:  true 
+            required:  true 
         },
         duration : {
             type :Number  , //cloudinary url 
-            reuqired:  true 
+            required:  true 
         },
         views : {
             type :Number  , //cloudinary url 
             default: 0
         },
-        ispublished  : {
+        isPublished  : {
             type :Boolean  , //cloudinary url 
             default :  true 
         },

@@ -1,5 +1,6 @@
-import mongoose, { isValidObjectId, mongo } from "mongoose";
+import mongoose, { isValidObjectId } from "mongoose";
 import { Playlist } from "../models/playlist.model.js";
+import { Video } from "../models/video.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -98,7 +99,9 @@ const getPlaylistById = asyncHandler(async (req, res) => {
 
   //check ownership (if visibility is private)
 
-  if (playlist.owner.toString() !== req.user._id.toString())
+  if (playlist.owner.toString() !== req.user._id.toString()){
+    throw new ApiError(403,"Only owner can see this playlist.")
+  }
     //returning response
 
     return res
@@ -145,7 +148,7 @@ const addVideoToPlaylist = asyncHandler(async (req, res) => {
   }
 
   const updatedPlaylist = await Playlist.findByIdAndUpdate(
-    { _id: playlistId, owner: user._id },
+    { _id: playlistId, owner: req.user._id },
     {
       $addToSet: { videos: videoId },
     },
@@ -198,8 +201,8 @@ const removeVideoFromPlaylist = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Video not found");
   }
 
-  const updatedPlaylist = await Playlist.findByIdAndDelete(
-    { _id: playlistId, owner: user._id },
+  const updatedPlaylist = await Playlist.findByIdAndUpdate(
+    { _id: playlistId, owner: req.user._id },
     {
       $pull: { videos: videoId },
     },
@@ -240,7 +243,7 @@ const deletePlaylist = asyncHandler(async (req, res) => {
 
   //checking ownership
 
-  if (playlist.owner.toString !== req.user._id.toString()) {
+  if (playlist.owner.toString() !== req.user._id.toString()) {
     throw new ApiError(
       403,
       "Authenticated But Forbidden: Only owner can edit this playlist."
@@ -282,20 +285,20 @@ const updatePlaylist = asyncHandler(async (req, res) => {
     }
 
     if(name !== undefined){
-        if(name.trim() !== ""){
+        if(name.trim() === ""){
             throw new ApiError(404,"Name cannot be empty.")
         }
-        updatedPlaylist.name = name;
+        playlist.name = name;
     }
     if(description !== undefined){
-        if(description.trim() !== ""){
+        if(description.trim() === ""){
             throw new ApiError(404,"Description cannot be empty.")
         }
         updatedPlaylist.description = description;
     }
 
     //saving thee updated playlist 
-    await updatePlaylist.save();
+    await playlist.save();
 
     //returning playlist with changes 
 

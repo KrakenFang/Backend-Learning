@@ -12,7 +12,7 @@ import {
   updateUserAvatar,
   updateUserCoverImage,
 } from "../controllers/user.controller.js";
-import { upload } from "../middlewares/mutler.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 import jwt from "jsonwebtoken";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 
